@@ -1,0 +1,138 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    field.cattle.io/publicEndpoints: '[{"addresses":["10.100.59.70","10.100.60.209","10.100.61.80","10.100.63.46"],"port":80,"protocol":"HTTP","serviceName":"streamtech:streamtech-pgadmin","ingressName":"streamtech:streamtech-pgadmin","hostname":"staging-pgadmin.platform.streamotion-platform-nonprod.com.au","path":"/","allNodes":false}]'
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/instance":"streamtech","app.kubernetes.io/managed-by":"Tiller","app.kubernetes.io/name":"pgadmin","app.kubernetes.io/version":"4.18.0","helm.sh/chart":"pgadmin-1.2.2"},"name":"streamtech-pgadmin","namespace":"streamtech"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/instance":"streamtech","app.kubernetes.io/name":"pgadmin"}},"template":{"metadata":{"labels":{"app.kubernetes.io/instance":"streamtech","app.kubernetes.io/name":"pgadmin"}},"spec":{"containers":[{"env":[{"name":"PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION","value":"False"},{"name":"PGADMIN_DEFAULT_EMAIL","value":"ares@streamotion.com.au"},{"name":"PGADMIN_DEFAULT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"streamtech-pgadmin"}}}],"image":"dpage/pgadmin4:4.18","imagePullPolicy":"IfNotPresent","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/misc/ping","port":80},"initialDelaySeconds":30,"periodSeconds":60,"successThreshold":1,"timeoutSeconds":15},"name":"pgadmin","ports":[{"containerPort":80,"name":"http","protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/misc/ping","port":80},"initialDelaySeconds":30,"periodSeconds":60,"successThreshold":1,"timeoutSeconds":15},"resources":{"limits":{"cpu":1,"memory":"512Mi"},"requests":{"cpu":0.5,"memory":"512Mi"}},"volumeMounts":[{"mountPath":"/var/lib/pgadmin","name":"pgadmin-data"}]}],"initContainers":[{"command":["/bin/chown","-R","5050:5050","/var/lib/pgadmin"],"image":"dpage/pgadmin4:4.18","imagePullPolicy":"IfNotPresent","name":"init-pgadmin","securityContext":{"runAsUser":0},"volumeMounts":[{"mountPath":"/var/lib/pgadmin","name":"pgadmin-data"}]}],"securityContext":{"fsGroup":5050,"runAsGroup":5050,"runAsUser":5050},"volumes":[{"name":"pgadmin-data","persistentVolumeClaim":{"claimName":"streamtech-pgadmin"}}]}}}}
+  creationTimestamp: "2020-09-19T13:02:59Z"
+  generation: 3
+  labels:
+    app.kubernetes.io/instance: streamtech
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/name: pgadmin
+    app.kubernetes.io/version: 4.18.0
+    helm.sh/chart: pgadmin-1.2.2
+  name: streamtech-pgadmin
+  namespace: streamtech
+  resourceVersion: "179863246"
+  selfLink: /apis/extensions/v1beta1/namespaces/streamtech/deployments/streamtech-pgadmin
+  uid: 71428052-fa78-11ea-929d-0616d32e556a
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: streamtech
+      app.kubernetes.io/name: pgadmin
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: streamtech
+        app.kubernetes.io/name: pgadmin
+    spec:
+      containers:
+      - env:
+        - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
+          value: "False"
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: ares@streamotion.com.au
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: streamtech-pgadmin
+        image: s50600822/pgadmin4:11
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /misc/ping
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 15
+        name: pgadmin
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /misc/ping
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 15
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/pgadmin
+          name: pgadmin-data
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - command:
+        - /bin/chown
+        - -R
+        - 5050:5050
+        - /var/lib/pgadmin
+        image: dpage/pgadmin4:4.18
+        imagePullPolicy: IfNotPresent
+        name: init-pgadmin
+        resources: {}
+        securityContext:
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/pgadmin
+          name: pgadmin-data
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 5050
+        runAsGroup: 5050
+        runAsUser: 5050
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: pgadmin-data
+        persistentVolumeClaim:
+          claimName: streamtech-pgadmin
+status:
+  conditions:
+  - lastTransitionTime: "2020-09-19T13:31:06Z"
+    lastUpdateTime: "2020-09-19T13:31:06Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  - lastTransitionTime: "2020-09-19T13:02:59Z"
+    lastUpdateTime: "2020-09-19T13:31:06Z"
+    message: ReplicaSet "streamtech-pgadmin-bb7d9fcb7" is progressing.
+    reason: ReplicaSetUpdated
+    status: "True"
+    type: Progressing
+  observedGeneration: 3
+  replicas: 2
+  unavailableReplicas: 2
+  updatedReplicas: 1
